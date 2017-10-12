@@ -1,0 +1,40 @@
+<ul class="posts">
+    {% for post in posts %}
+    <li class="post">
+        <div class="post-thumbnail">
+            {% if post.author %}
+            <a href="{{ url_for('main.user', username=post.author.username) }}">
+            <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=40)}}">
+            </a>
+            {% else %}
+            <img class="img-rounded profile-thumbnail" src="{{ url_for('static', filename='favicon.ico') }}">
+            {% endif %}          
+        </div>
+        <div class="post-content">
+            <div class="post-date"> {{ moment(post.timestamp).format('LLL')}} </div>
+            <div class="post-author">
+            {% if post.author %}
+            <a href="{{ url_for('main.user', username=post.author.username) }}">{{ post.author.username }}</a>
+            {% else %}
+            [Deleted account]
+            {% endif %}
+            </div>
+            <div class="post-body"> {{post.body}} </div>
+            <div class="post-footer">
+                <a href="{{ url_for('main.post',id=post.id)}}">
+                    <span class="label label-default">Permalink</span>
+                </a>
+                {% if post.author == current_user %}
+                <a href="{{ url_for('main.edit_post',id=post.id)}}">
+                    <span class="label label-default">Edit</span>
+                </a>
+                {% elif current_user.is_administrator() %}
+                <a href="{{ url_for('main.edit_post',id=post.id)}}">
+                    <span class="label label-default">Edit [Admin]</span>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>

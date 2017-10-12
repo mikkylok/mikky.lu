@@ -1,0 +1,35 @@
+<ul class="posts">
+    {% for person in people %}
+    <li class="post">
+        <div class="post-thumbnail">
+            {% if person["user"] %}
+            <a href="{{ url_for('main.user', username=person["user"].username) }}">
+            <img class="img-rounded profile-thumbnail" src="{{ person["user"].gravatar(size=40)}}">
+            </a>
+            {% else %}
+            <img class="img-rounded profile-thumbnail" src="{{ url_for('static', filename='favicon.ico') }}">
+            {% endif %}          
+        </div>
+        <div class="post-content">
+            <div class="post-date"> {{ moment(person["timestamp"]).format('LLL')}} </div>
+            <div class="post-author">
+            {% if person["user"] %}
+            <a href="{{ url_for('main.user', username=person["user"].username) }}">{{ person["user"].username }}</a>
+            {% else %}
+            [Deleted account]
+            {% endif %}
+            </div>
+            <div class="post-body"> {{person["user"].about_me}} </div>
+            <div class="post-footer">
+            {% if person["user"]!=current_user and current_user.can(Permission.FOLLOW) %}
+                {% if not current_user.is_following(person["user"]) %}
+                <a class="btn btn-primary" href="{{url_for('main.follow', id=person["user"].id)}}">Follow</a>
+                {% else %}
+                <a class="btn btn-default" href="{{url_for('main.unfollow', id=person["user"].id)}}">Unfollow</a>
+                {% endif %}
+            {% endif %}
+           </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>

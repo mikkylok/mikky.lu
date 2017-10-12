@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Post - {{post.author.username}} {% endblock %}
+
+{% block page_content %}
+<div class='page-header'>
+    <img class="img-rounded profile-thumbnail" {% if post.author %}src="{{ post.author.gravatar(size=40)}}" {%else%}src="{{ url_for('static', filename='favicon.ico') }}"{%endif%}>
+    <div class="profile-header">
+        <h1>{% if post.author %}{{post.author.username}}{%else%}[Deleted account]{%endif%}</h1>
+        <p> Posted on {{moment(post.timestamp).format('LLL')}}.</p>
+        <p>
+            {% if post.author==current_user %}
+            <a class="btn btn-default" href="{{ url_for('main.edit_post',id=post.id)}}">Edit post</a>
+            {% elif current_user.is_administrator() %}
+            <a class="btn btn-default" href="{{ url_for('main.edit_post',id=post.id)}}">Edit post [Admin]</a>
+            {% endif %}
+        </p>
+    </div>
+</div>
+<div>
+<p> {{post.body}}</p>
+</div>
+<div>
+<h2>Comments</h2>
+{% if current_user.can(Permission.COMMENT) %}
+    {{ wtf.quick_form(form) }}
+{% endif %}
+</div>
+<div>
+    {% include '_comment.html' %}
+</div>
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination,'main.post',id=post.id) }}
+</div>
+{% endif %}
+{% endblock %}
+
