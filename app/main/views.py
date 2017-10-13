@@ -3,11 +3,12 @@ from . import main
 from ..decorators import admin_required, permission_required
 from ..models import User, Permission, Role, Post, Follow, Comment
 from flask_login import login_required, current_user, login_required
-from .forms import EditProfileForm, EditProfileAdminForm, PostForm, EditPostForm, CommentForm
+from .forms import EditProfileForm, EditProfileAdminForm, PostForm, EditPostForm, CommentForm, ChangeAvatarForm
 from .. import db
 from datetime import datetime
 from math import ceil
 import logging
+import os
 
 @main.route('/', methods=['GET','POST'])
 def index():
@@ -59,7 +60,7 @@ def user(username):
 
 @main.route('/edit-profile', methods=['GET','POST'])
 @login_required
-def edit_profile():
+def edit_profile():   
     form = EditProfileForm()
     if form.validate_on_submit():
         current_user.name=form.real_name.data
@@ -237,3 +238,32 @@ def enable(id):
     comment.disabled = False
     db.session.add(comment)
     return redirect(url_for('main.moderate_comments', page=request.args.get("page",1,type=int)))
+
+
+@main.route('/change-avatar/<username>', methods=['GET','POST'])
+@login_required
+def change_avatar(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        abort(404)
+    form = ChangeAvatarForm()
+    if form.validate_on_submit():
+        avatar = request.files['avatar']
+        filename = avatar.filename
+        UPLOAD_FOLDER = current_app.config['UPLOAD_FOLDER']
+        path='{}{}_{}'.format(UPLOAD_FOLDER,user.username,filename)
+        avatar.save(path)
+        size = os.stat(path).st_size
+        if size <= 1024*1024:
+            user.profile_picture = '/static/avatar/{}_{}'.format(user.username,filename)
+            db.session.add(user)
+            flash("You have updated your profile picture.")
+        else:
+            flash("Size should be less than 1MB.Please upload again!")
+        return redirect(url_for('main.change_avatar', username=user.username))
+    return render_template('change_avatar.html', form=form, user=user)
+
+@main.route('/test')
+def test():
+    current_app.logger.warning(type(url_for('static',filename='favicon.ico')))
+    return render_template('test.html')

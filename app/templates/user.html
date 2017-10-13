@@ -5,7 +5,11 @@
 
 {% block page_content %}
 <div class='page-header'>
-    <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256)}}">
+    {% if current_user == user or current_user.is_administrator() %}
+    <a href="{{url_for('main.change_avatar',username=user.username)}}">
+    <img class="img-rounded profile-thumbnail"src="{{ user.gravatar(size=256)}}" width=256 height=256>
+    </a>
+    {% endif %}
     <div class="profile-header">
         <h1>{{user.username}}</h1>
         {% if user.name or user.location %}

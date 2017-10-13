@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, TextAreaField
+from wtforms import StringField, SubmitField, SelectField, TextAreaField, FileField, ValidationError
 from wtforms.validators import Required, Length, Email, Regexp
 from ..models import Role, User
 from flask_pagedown.fields import PageDownField
+from flask import current_app
 
 class NameForm(FlaskForm):
     name = StringField('What is your name?', validators=[Required()])
@@ -52,4 +53,18 @@ class CommentForm(FlaskForm):
     body = PageDownField("Enter your comment", validators=[Required()])
     submit = SubmitField("Submit")
 
+class ChangeAvatarForm(FlaskForm):
+    avatar = FileField('Profile picture')
+    submit = SubmitField("Upload")
 
+    def validate_avatar(self, field):
+        filename = field.data.filename
+        UPLOAD_FOLDER = current_app.config['UPLOAD_FOLDER']
+        ALLOWED_EXTENSIONS = ['png','jpg','jpeg','gif','PNG','JPG','JPEG','GIF']
+        flag = '.' in filename and filename.rsplit('.',1)[1] in ALLOWED_EXTENSIONS
+        if not flag:
+            raise ValidationError('Invalid picture format!')
+        #size = len(field.data.read())
+        #current_app.logger.warning(size)
+        #if size > 1024*1024:
+        #    raise ValidationError('Avatar size has to be under 1MB!')

@@ -17,6 +17,8 @@ class Config:
     FLASKY_POSTS_PER_PAGE = 3
     FLASKY_FOLLOWERS_PER_PAGE = 3
     FLASKY_COMMENTS_PER_PAGE = 3
+    UPLOAD_FOLDER = os.getcwd()+'/app/static/avatar/'
+    MAX_CONTENT_LENGTH = 2*1024*1024
 
     @staticmethod
     def init_app(app):
