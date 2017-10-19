@@ -108,3 +108,6 @@ div.flask-pagedown-preview h3 {
 div.comment-footer {
     text-align: right;
 }
+#upload_avatar{
+    padding-top: 256px;
+}

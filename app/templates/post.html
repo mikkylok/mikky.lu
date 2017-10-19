@@ -6,7 +6,7 @@
 
 {% block page_content %}
 <div class='page-header'>
-    <img class="img-rounded profile-thumbnail" {% if post.author %}src="{{ post.author.gravatar(size=40)}}" {%else%}src="{{ url_for('static', filename='favicon.ico') }}"{%endif%}>
+    <img class="img-rounded profile-thumbnail" {% if post.author %}src="{{ post.author.gravatar(size=40)}}" {%else%}src="{{ url_for('static', filename='avatar/default-avatar.png') }}"{%endif%} width=40 height=40>
     <div class="profile-header">
         <h1>{% if post.author %}{{post.author.username}}{%else%}[Deleted account]{%endif%}</h1>
         <p> Posted on {{moment(post.timestamp).format('LLL')}}.</p>

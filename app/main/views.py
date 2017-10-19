@@ -263,7 +263,6 @@ def change_avatar(username):
         return redirect(url_for('main.change_avatar', username=user.username))
     return render_template('change_avatar.html', form=form, user=user)
 
-@main.route('/test')
-def test():
-    current_app.logger.warning(type(url_for('static',filename='favicon.ico')))
-    return render_template('test.html')
+@main.route('/resume')
+def resume():
+    return render_template('resume.html')

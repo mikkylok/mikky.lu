@@ -7,7 +7,7 @@
             <img class="img-rounded profile-thumbnail" src="{{ person["user"].gravatar(size=40)}}">
             </a>
             {% else %}
-            <img class="img-rounded profile-thumbnail" src="{{ url_for('static', filename='favicon.ico') }}">
+            <img class="img-rounded profile-thumbnail" src="{{ url_for('static', filename='avatar/default-avatar.png') }}" width=40 height=40>
             {% endif %}          
         </div>
         <div class="post-content">
